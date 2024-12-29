@@ -1,4 +1,5 @@
 import numpy as np
+import yfinance as yf
 
 
 def black_litterman_adjustment(market_returns, investor_views, view_confidences, historical_data, tau=0.025):
@@ -16,7 +17,6 @@ def black_litterman_adjustment(market_returns, investor_views, view_confidences,
     Q = np.array(list(investor_views.values())).reshape(-1, 1)
 
     cov_matrix = historical_data['Adj Close'].pct_change().dropna().cov()
-
     # Ensure investor views and confidences are also arrays
     omega = np.diag([tau / confidence for confidence in view_confidences.values()])
 
@@ -34,18 +34,27 @@ def get_market_caps(tickers):
     :param tickers: list of tickers
     :return: A dictionary with tickers and their example market capitalizations.
     """
-    market_caps = {
-        'AAPL': 2.0e12,  # Apple Inc.
-        'JNJ': 800.0e9,  # Johnson & Johnson
-        'PG': 400.0e9,   # Procter & Gamble Co.
-        'JPM': 250.0e9,  # JPMorgan Chase & Co.
-        'XOM': 200.0e9,  # Exxon Mobil Corporation
-        'MMM': 230.0e9,  # 3M Company
-        'SO': 220.0e9,   # Southern Company
-        'VZ': 260.0e9,   # Verizon Communications Inc.
-        'NKE': 400.0e9,  # NIKE, Inc.
-        'DD': 130.0e9    # DuPont de Nemours, Inc.
-    }
+    #get market caps in yfinance
+    market_caps = {}
+    for ticker in tickers:
+        stock = yf.Ticker(ticker)
+        market_caps[ticker] = stock.info['marketCap']
+
+    #print market_caps
+    for key, value in market_caps.items():
+        print(key, value)
+    # market_caps = {
+    #     'AAPL': 2.0e12,  # Apple Inc.
+    #     'JNJ': 800.0e9,  # Johnson & Johnson
+    #     'PG': 400.0e9,   # Procter & Gamble Co.
+    #     'JPM': 250.0e9,  # JPMorgan Chase & Co.
+    #     'XOM': 200.0e9,  # Exxon Mobil Corporation
+    #     'MMM': 230.0e9,  # 3M Company
+    #     'SO': 220.0e9,   # Southern Company
+    #     'VZ': 260.0e9,   # Verizon Communications Inc.
+    #     'NKE': 400.0e9,  # NIKE, Inc.
+    #     'DD': 130.0e9    # DuPont de Nemours, Inc.
+    # }
     return market_caps
 
 

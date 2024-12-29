@@ -37,6 +37,11 @@ def information_ratio(returns, benchmark_returns):
     :param benchmark_returns: numpy array or pandas Series of returns for the benchmark
     :return: float, the calculated Information Ratio\
     """
+    #fill nan values with last value
+    #returns = returns.fillna(method='ffill')
+    #benchmark_returns = benchmark_returns.fillna(method='ffill')
+
+
     active_returns = returns - (benchmark_returns / 252)
     annualized_active_return = np.mean(active_returns) * 252
     tracking_error = np.std(active_returns) * np.sqrt(252)

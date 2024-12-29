@@ -26,7 +26,7 @@ def download_stock_data(tickers, start_date, end_date):
     return yf.download(tickers, start_date, end_date, progress=False)
 
 
-def mean_variance_optimization(tickers, start_date, end_date, max_volatility, expected_returns=None, min_weight=0.01, max_weight=0.35, simulations=10000):
+def mean_variance_optimization(tickers, start_date, end_date, max_volatility, expected_returns=None, min_weight=0.01, max_weight=0.35, simulations=50000):
     """
     Performs enhanced mean-variance optimization with weight constraints
     :param list tickers: list of stock tickers to optimize weights for
@@ -41,6 +41,7 @@ def mean_variance_optimization(tickers, start_date, end_date, max_volatility, ex
     """
     data = download_stock_data(tickers, start_date, end_date)['Adj Close']
     daily_returns = data.pct_change().dropna()
+
 
     if expected_returns is None:
         # Calculate expected returns from historical data
@@ -66,7 +67,8 @@ def mean_variance_optimization(tickers, start_date, end_date, max_volatility, ex
     columns = ['Annualized Return', 'Annualized Volatility', 'Mean-Variance', 'Simulation Index']
     simulation_results = pd.DataFrame(simulation_results.T, columns=columns)
     filtered_results = simulation_results[simulation_results['Annualized Volatility'] <= max_volatility]
+    print("filtered_results:", filtered_results)
     optimal_mean_variance_idx = filtered_results['Mean-Variance'].idxmax()
-
+        
     return weights_record[:, optimal_mean_variance_idx]
 

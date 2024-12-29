@@ -10,36 +10,76 @@ from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 
 
-
 # Define current user portfolio
 portfolio = {
-    'AAPL': 1500.0,  # Apple Inc.
-    'JNJ': 1200.0,   # Johnson & Johnson
-    'PG': 800.0,     # Procter & Gamble Co.
-    'JPM': 1300.0,   # JPMorgan Chase & Co.
-    'XOM': 700.0,    # Exxon Mobil Corporation
-    'MMM': 600.0,    # 3M Company
-    'SO': 500.0,     # Southern Company
-    'VZ': 600.0,     # Verizon Communications Inc.
-    'NKE': 1000.0,   # NIKE, Inc.
-    'DD': 800.0      # DuPont de Nemours, Inc.
+    '600000.SS': 1000.0,  # 浦发银行
+    '600009.SS': 1000.0,  # 上海机场
+    '600016.SS': 1000.0,  # 民生银行
+    '600028.SS': 1000.0,  # 中国石化
+    '600030.SS': 1000.0,  # 中信证券
+    '600031.SS': 1000.0,  # 三一重工
+    '600036.SS': 1000.0,  # 招商银行
+    '600048.SS': 1000.0,  # 保利地产
+    '600050.SS': 1000.0,  # 中国联通
+    '600104.SS': 1000.0,  # 上汽集团
+    '600196.SS': 1000.0,  # 复星医药
+    '600276.SS': 1000.0,  # 恒瑞医药
+    '600309.SS': 1000.0,  # 万华化学
+    '600340.SS': 1000.0,  # 华夏幸福
+    '600519.SS': 1000.0,  # 贵州茅台
+    '600547.SS': 1000.0,  # 山东黄金
+    '600585.SS': 1000.0,  # 海螺水泥
+    '600690.SS': 1000.0,  # 青岛海尔
+    '600703.SS': 1000.0,  # 三安光电
+    '600837.SS': 1000.0,  # 海通证券
+    '600887.SS': 1000.0,  # 伊利股份
+    '601012.SS': 1000.0,  # 隆基股份
+    '601066.SS': 1000.0,  # 中信建投
+    '601088.SS': 1000.0,  # 中国神华
+    '601111.SS': 1000.0,  # 中国国航
+    '601138.SS': 1000.0,  # 工业富联
+    '601166.SS': 1000.0,  # 兴业银行
+    '601186.SS': 1000.0,  # 中国铁建
+    '601211.SS': 1000.0,  # 国泰君安
+    '601236.SS': 1000.0,  # 红塔证券
+    '601288.SS': 1000.0,  # 农业银行
+    '601318.SS': 1000.0,  # 中国平安
+    '601319.SS': 1000.0,  # 中国人保
+    '601328.SS': 1000.0,  # 交通银行
+    '601336.SS': 1000.0,  # 新华保险
+    '601390.SS': 1000.0,  # 中国中铁
+    '601398.SS': 1000.0,  # 工商银行
+    '601601.SS': 1000.0,  # 中国太保
+    '601628.SS': 1000.0,  # 中国人寿
+    '601668.SS': 1000.0,  # 中国建筑
+    '601688.SS': 1000.0,  # 华泰证券
+    '601766.SS': 1000.0,  # 中国中车
+    '601818.SS': 1000.0,  # 光大银行
+    '601857.SS': 1000.0,  # 中国石油
+    '601888.SS': 1000.0,  # 中国国旅
+    '601939.SS': 1000.0,  # 建设银行
+    '601988.SS': 1000.0,  # 中国银行
+    '601989.SS': 1000.0,  # 中国重工
+    '603259.SS': 1000.0,  # 药明康德
+    '603993.SS': 1000.0,  # 洛阳钼业
 }
-
 # Define market representation
-market_representation = ['SPY']
+market_representation = ['510050.SS']
+#market_representation = ['000001.SS']
+
 
 # Define a dictionary for storing weights of portfolios
 portfolio_weights = {}
 
 # Define dates for training and backtesting
-training_start_date = '2013-11-27'
-training_end_date = '2018-11-27'
+training_start_date = '2018-01-01'
+training_end_date = '2023-08-30'
 backtesting_start_date = training_end_date
-backtesting_end_date = '2023-11-27'
+backtesting_end_date = '2024-08-30'
 risk_free_rate = 0.04
 
 # Define risk sensitivity for Mean-Variance Optimization
-max_volatility = 0.225
+max_volatility = 0.25
 
 # Define minimum and maximum asset weights for Mean-Variance Optimization
 min_weight = .01
@@ -54,7 +94,7 @@ investor_views = {}
 view_confidences = {}
 
 for ticker in tickers:
-    investor_views[ticker], view_confidences[ticker] = mls.generate_investor_views(ticker, training_start_date, training_end_date)
+    investor_views[ticker], view_confidences[ticker] = mls.generate_investor_views(ticker, training_start_date, training_end_date, model_type='Gradient Boosting')
 
 market_caps = bl.get_market_caps(tickers)
 index_data = mv.download_stock_data(market_representation, training_start_date, training_end_date)
@@ -102,13 +142,21 @@ optimized_weights_pct = [f'{weight * 100:.2f}%' for weight in optimized_weights_
 optimized_weights_with_adjusted_returns_pct = [f'{weight * 100:.2f}%' for weight in optimized_weights_ml_mv]
 
 # Create a DataFrame and output it to show comparison between portfolio weights
-portfolio_comparison = pd.DataFrame({'Original': weights_pct,'MV Optimization': optimized_weights_pct, 'ML MV Optimization': optimized_weights_with_adjusted_returns_pct}, index=tickers)
+portfolio_comparison = pd.DataFrame({'1/N': weights_pct,'MV Optimization': optimized_weights_pct, 'ML MV Optimization': optimized_weights_with_adjusted_returns_pct}, index=tickers)
 print(portfolio_comparison)
+
+portfolio_returns_ml_mv = portfolio_returns_ml_mv.squeeze()
+portfolio_returns_mv = portfolio_returns_mv.squeeze()
+portfolio_returns_unoptimized = portfolio_returns_unoptimized.squeeze()
+market_returns = market_returns.squeeze()
 
 # Calculate statistics for ML MV optimized portfolio
 sharpe_ratio_ml_mv = ps.sharpe_ratio(portfolio_returns_ml_mv, risk_free_rate)
+#print('sharpe_ratio_ml_mv:', sharpe_ratio_ml_mv)
 sortino_ratio_ml_mv = ps.sortino_ratio(portfolio_returns_ml_mv, risk_free_rate)
+# print("info_ratio_ml_mv_debug:", portfolio_returns_ml_mv, market_returns)
 info_ratio_ml_mv = ps.information_ratio(portfolio_returns_ml_mv, market_returns)
+#print(info_ratio_ml_mv)
 
 # Calculate statistics for MV optimized portfolio
 sharpe_ratio_mv = ps.sharpe_ratio(portfolio_returns_mv, risk_free_rate)
@@ -122,6 +170,7 @@ info_ratio_unoptimized = ps.information_ratio(portfolio_returns_unoptimized, mar
 
 # Calculate statistics for the market representation
 sharpe_ratio_market = ps.sharpe_ratio(market_returns, risk_free_rate)
+#print('sharpe_ratio_market:', sharpe_ratio_market)
 sortino_ratio_market = ps.sortino_ratio(market_returns, risk_free_rate)
 info_ratio_market = ps.information_ratio(market_returns, market_returns)
 
@@ -132,13 +181,17 @@ ax = plt.gca()
 sns.set_palette("bright")  # You can choose any palette like "deep", "muted", "bright", etc.
 colors = sns.color_palette()
 
+background_color = 'white'
+text_color = 'black'
+grid_color = 'lightgray'
+
 # Set plot aesthetics for readability
-plt.gcf().set_facecolor('black')
-ax.set_facecolor('black')
-ax.xaxis.label.set_color('white')
-ax.yaxis.label.set_color('white')
-ax.tick_params(axis='x', colors='white')
-ax.tick_params(axis='y', colors='white')
+plt.gcf().set_facecolor(background_color)
+# ax.set_facecolor('white')
+# ax.xaxis.label.set_color('black')
+# ax.yaxis.label.set_color('black')
+# ax.tick_params(axis='x', colors='black')
+# ax.tick_params(axis='y', colors='black')
 ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.2f}%'.format(y)))
 
 # ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f'{100 * y:.2f}%'))
@@ -150,38 +203,58 @@ cumulative_returns_ml_mv_percent = (cumulative_returns_ml_mv - 1) * 100
 cumulative_returns_mv_percent = (cumulative_returns_mv - 1) * 100
 cumulative_returns_unoptimized_percent = (cumulative_returns_unoptimized - 1) * 100
 cumulative_market_returns_percent = (cumulative_market_returns - 1) * 100
+# 调试代码，打印列表长度和内容
+#print('cumulative_market_returns_percent length:', len(cumulative_market_returns_percent))
+#print('cumulative_market_returns_percent:', cumulative_market_returns_percent)
+
 
 final_returns_ml_mv = cumulative_returns_ml_mv_percent[-1]
+#print('final_returns_ml_mv:', final_returns_ml_mv)
+#print('cumulative_returns_ml_mv_percent length:', cumulative_returns_ml_mv_percent)
 final_returns_mv = cumulative_returns_mv_percent[-1]
 final_returns_unoptimized = cumulative_returns_unoptimized_percent[-1]
-final_returns_market = cumulative_market_returns_percent[-1]
+# 打印最后一个元素
+#print('cumulative_returns_unoptimized_percent:', cumulative_market_returns_percent)
+#print("cumulative_returns_unoptimized_percent:", cumulative_market_returns_percent.shape)
+#get the final element of cumulative_market_returns_percent
+#cumulative_returns_unoptimized_percent.shape: (1257, 1)
+#suqqze the array to 1D and get the last element
+final_returns_market = cumulative_market_returns_percent.squeeze()[-1]
 
 # Plot lines representing percentage gain returns
 plt.plot(cumulative_returns_ml_mv_percent, label='Portfolio Optimized with ML and MV', color=colors[0])
 plt.plot(cumulative_returns_mv_percent, label='Portfolio Optimized with MV', color=colors[1])
-plt.plot(cumulative_market_returns_percent, label='Market Index (SPY)', color=colors[2])
-plt.plot(cumulative_returns_unoptimized_percent, label='Original Unoptimized Portfolio', color=colors[3])
+plt.plot(cumulative_market_returns_percent, label='SSE 50 Index', color=colors[2])
+plt.plot(cumulative_returns_unoptimized_percent, label='1/N Unoptimized Portfolio', color=colors[3])
+
+
 
 # Generate box for ML MV Optimized Portfolio
+# print("sharpe_ratio_ml_mv",sharpe_ratio_ml_mv)
+# print("sortino_ratio_ml_mv",sortino_ratio_ml_mv)
+# print("info_ratio_ml_mv",info_ratio_ml_mv)
+# print("final_returns_ml_mv",final_returns_ml_mv)
+
 stats_text_ml_mv = f"ML & MV Optimized Portfolio:\nSharpe Ratio: {sharpe_ratio_ml_mv:.2f}\nSortino Ratio: {sortino_ratio_ml_mv:.2f}\nInfo Ratio: {info_ratio_ml_mv:.2f}\nReturn: {final_returns_ml_mv:.2f}%"
-plt.text(x=0.0655, y=0.77, s=stats_text_ml_mv, transform=plt.gcf().transFigure, fontsize=10, color='white', bbox=dict(boxstyle="round,pad=0.3", edgecolor=colors[0], facecolor='black'))
+plt.text(x=0.0655, y=0.77, s=stats_text_ml_mv, transform=plt.gcf().transFigure, fontsize=10, color=text_color, bbox=dict(boxstyle="round,pad=0.3", edgecolor=colors[0], facecolor=background_color))
 
 # Generate box for MV Optimized Portfolio
 stats_text_mv = f"MV Optimized Portfolio:\nSharpe Ratio: {sharpe_ratio_mv:.2f}\nSortino Ratio: {sortino_ratio_mv:.2f}\nInfo Ratio: {info_ratio_mv:.2f}\nReturn: {final_returns_mv:.2f}%"
-plt.text(x=0.0655, y=0.67, s=stats_text_mv, transform=plt.gcf().transFigure, fontsize=10, color='white', bbox=dict(boxstyle="round,pad=0.3", edgecolor=colors[1], facecolor='black'))
+plt.text(x=0.0655, y=0.67, s=stats_text_mv, transform=plt.gcf().transFigure, fontsize=10, color=text_color, bbox=dict(boxstyle="round,pad=0.3", edgecolor=colors[1], facecolor=background_color))
 
 # Generate box for Unoptimized Portfolio
-stats_text_unoptimized = f"Market ({market_representation[0]}):\nSharpe Ratio: {sharpe_ratio_market:.2f}\nSortino Ratio: {sortino_ratio_market:.2f}\nInfo Ratio: {info_ratio_market:.2f}\nReturn: {final_returns_market:.2f}%"
-plt.text(x=0.0655, y=0.57, s=stats_text_unoptimized, transform=plt.gcf().transFigure, fontsize=10, color='white', bbox=dict(boxstyle="round,pad=0.3", edgecolor=colors[2], facecolor='black'))
+stats_text_unoptimized = f"Market ({market_representation[0]} INDEX):\nSharpe Ratio: {sharpe_ratio_market:.2f}\nSortino Ratio: {sortino_ratio_market:.2f}\nInfo Ratio: {info_ratio_market:.2f}\nReturn: {final_returns_market:.2f}%"
+plt.text(x=0.0655, y=0.57, s=stats_text_unoptimized, transform=plt.gcf().transFigure, fontsize=10, color=text_color, bbox=dict(boxstyle="round,pad=0.3", edgecolor=colors[2], facecolor=background_color))
 
 # Generate box for market
 stats_text_market = f"Unoptimized Portfolio\nSharpe Ratio: {sharpe_ratio_unoptimized:.2f}\nSortino Ratio: {sortino_ratio_unoptimized:.2f}\nInfo Ratio: {info_ratio_unoptimized:.2f}\nReturn: {final_returns_unoptimized:.2f}%"
-plt.text(x=0.0655, y=0.47, s=stats_text_market, transform=plt.gcf().transFigure, fontsize=10, color='white', bbox=dict(boxstyle="round,pad=0.3", edgecolor=colors[3], facecolor='black'))
+plt.text(x=0.0655, y=0.47, s=stats_text_market, transform=plt.gcf().transFigure, fontsize=10, color=text_color, bbox=dict(boxstyle="round,pad=0.3", edgecolor=colors[3], facecolor=background_color))
 
 
-plt.title('Comparative Cumulative Returns', color='white')
-plt.xlabel('Date')
-plt.ylabel('Percentage Gain (%)')
-plt.legend(loc='best')
+plt.title('Comparative Cumulative Returns', color=text_color)
+plt.xlabel('Date', color=text_color)
+plt.ylabel('Percentage Gain (%)', color=text_color)
+
+plt.legend(loc='best', facecolor=background_color, edgecolor=text_color, labelcolor=text_color)
 plt.grid(True)
 plt.show()

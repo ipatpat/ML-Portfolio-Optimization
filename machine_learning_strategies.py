@@ -28,9 +28,11 @@ def create_additional_features(stock_data):
     :return: pandas Dataframe with columns for moving averages
     """
     df = pd.DataFrame(stock_data)
+    df.columns = ['Adj Close']
     df['5d_rolling_avg'] = stock_data.rolling(window=5).mean()
     df['10d_rolling_avg'] = stock_data.rolling(window=10).mean()
     # Add more features as needed
+    #print(df)
     return df
 
 
@@ -131,10 +133,9 @@ def generate_investor_views(ticker, start_date, end_date, model_type='Linear Reg
 
     # Select and train the model
     if model_type == 'Random Forest':
-
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        model = RandomForestRegressor(n_estimators=1000, random_state=42)
     elif model_type == 'Gradient Boosting':
-        model = GradientBoostingRegressor(n_estimators=100, random_state=42)
+        model = GradientBoostingRegressor(n_estimators=1000, random_state=42)
     elif model_type == 'Linear Regression':
         model = LinearRegression()
     else:
